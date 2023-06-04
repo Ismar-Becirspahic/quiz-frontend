@@ -1,0 +1,11 @@
+*{
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  --background-color: #326789;
+  --primary-color:#78A6C8;
+  --text-color:#E9EEF2;
+  --secondary-color:#E65C4F;
+  --success-color:#179562
+}
+

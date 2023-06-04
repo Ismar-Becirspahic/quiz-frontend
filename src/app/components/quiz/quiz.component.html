@@ -1,0 +1,189 @@
+<div class="background-image">
+    <div class="first">
+    <div class="quiz-header" *ngIf="!($isQuizCompleted | async) 
+    && ($questions | async)!.length > ($currentQno | async)!">
+      <div class="image">
+        <img src="./assets/images/Logo.png" width="128px" height="128px" alt="logo">
+      </div>
+    </div>
+    <ng-container *ngIf="!($isQuizCompleted | async) 
+    && ($questions | async)!.length > ($currentQno | async)!">
+    <div class="score-question">
+        <div class="score" *ngIf="($points | async)! > 0">
+          <h5>{{$points | async}} Points</h5>
+        </div>
+        <div class="question-remain">
+          <h5>Question {{($currentQno | async)!+1}} </h5>
+        </div>
+    </div>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" 
+        [ngStyle]="{'width':($progress | async)+'%'}"></div>
+      </div>
+      <div class="question" *ngIf="$questions | async as questions">
+          <h3>{{questions[($currentQno | async)!].questionText}}</h3>
+      </div>
+      <div class="options" *ngIf="$questions | async as questions">
+        <ol *ngFor="let option of questions[($currentQno | async)!]?.answers">
+            <div class="answer" (click)="answer(option)">
+              <div class="image">
+                <img src="./assets/images/Logo.png" alt="" />
+                </div>
+              <div class="text">
+                <p>
+                  {{option.text}}
+                </p>
+              </div>
+            </div>
+        </ol>
+      </div>
+      <div class="two-buttons" *ngIf="$questions | async as questions">
+        <button type="button" class="button">
+          <span class="button__text">Restart</span>
+          <span class="button__icon" (click)="resetQuiz()">
+            <svg xmlns="http://www.w3.org/2000/svg"
+             width=24 height=24
+              viewBox="0 0 24 24">
+              <path d="M12,5V2L8,6l4,4V7c3.31,0,6,2.69,6,6c0,2.97-2.17,5.43-5,5.91v2.02c3.95-0.49,7-3.85,7-7.93C20,8.58,16.42,5,12,5z" fill="white"></path><path d="M6,13c0-1.65,0.67-3.15,1.76-4.24L6.34,7.34C4.9,8.79,4,10.79,4,13c0,4.08,3.05,7.44,7,7.93v-2.02 C8.17,18.43,6,15.97,6,13z" fill="white"></path></svg></span>
+        </button>
+        <button [disabled]="($currentQno | async)===questions.length-1" (click)="nextQuestion()" type="button" class="button">
+          <span class="button__text">Next</span>
+          <span class="button__icon">
+            <svg xmlns="http://www.w3.org/2000/svg"
+             width="24" height="24"
+              fill="white" class="bi bi-arrow-right"
+               viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/> </svg></span>
+        </button>
+      </div>
+    </ng-container>
+    </div>
+    <ng-container class="first" *ngIf="($isQuizCompleted | async) || ($questions | async)!.length
+     <= ($currentQno | async)!">
+      <div class="nickname-section" *ngIf="!($nickname | async)">
+        <div class="nickname-div">
+          <div class="nickname-img">
+            <img style="margin-bottom: 12%; 
+            width: 90%; 
+            height: 90%; 
+            min-height: 10%; 
+            min-width: 10%;"  
+            class="img-fluid col-md-6 mx-auto"
+            src="./assets/images/Logo.png" alt="">
+          </div>
+          <div class="nickname-info">
+            <div class="nickname-pos">
+              <div class="form__group field">
+                <input [(ngModel)]="nickname" 
+                id="nickname" placeholder="Nickname" required minlength="3" 
+                name="nickname" class="form__field" type="text">
+                <label class="form__label" for="nickname">Nickname</label>
+              </div>
+              <div style="text-align: center; margin-top: 5%;" 
+              id="nickname-alert" class="text-danger"></div>
+            </div>
+            <button style="margin: 5% 0;" class="btn" 
+            (click)="saveNickname()">Results<span></span></button>
+          </div>
+        </div>
+
+      </div>
+      <div *ngIf="($nickname | async)" 
+      style="background-color: var(--background-color)">
+        <div class="results">
+          <div class="results-top">
+            <div class="row">
+            <ng-container *ngIf="($correctAnswer | async)! > ($questions | async)!.length
+               - ($questions | async)!.length / 2">
+              <h3 class="heading-quiz">Congratulations, you have managed to pass the quiz!
+                <br>Below is your result:</h3>
+            </ng-container>
+            <ng-container *ngIf="($correctAnswer | async)! <= ($questions | async)!.length
+             - ($questions | async)!.length / 2">
+              <h3 class="heading-quiz">Unfortunately you have failed to pass the quiz.
+                <br>Below is your result:</h3>
+            </ng-container>
+            <p>Total attempted questions: {{($questions | async)!.length 
+              - ($skippedQuestion | async)! }} </p>
+            <p>Correct answers: {{$correctAnswer | async}} </p>
+            <p>Incorrect answers: {{$incorrectAnswer | async}} </p>
+            <p>Skipped questions: {{$skippedQuestion | async}}</p>
+            <p>Score: {{$points | async}} Points </p>
+              <div class="result-buttons">
+            <button class="btn" (click)="resetQuiz()">Restart</button>
+            <button class="btn" (click)="showReview()">Review</button>
+            <button class="btn" (click)="showScoreboard()">Scoreboard</button>
+              </div>
+            </div>
+          </div>
+          <div class="modal" [ngClass]="{'active': ($modal | async)}">
+            <div class="modal-content">
+              <div class="score-review">
+                <ng-container *ngIf="($review | async)">
+                  <h3 class="heading-quiz" style="text-align: center; padding: 10px 0;">Review</h3>
+                  <ng-container *ngFor="let question of ($questions | async);
+                   let i = index">
+                    <ol class="list-group">
+                      <li class="list-group-item active"
+                       style="border: none;
+                       z-index: 0;
+                       background-color: var(--primary-color); 
+                       color: var(--text-color); ">{{i+1}}. {{ question.questionText }}</li>
+                       <div class="list-option" *ngFor="let option of question.answers">
+                        <ng-container *ngIf="option.correct">
+                          <li class="list-group-item" style="background-color: var(--success-color);
+                      box-shadow: 0 0 15px rgba(0,0,0,0.2);" >
+                <span style="color: var(--text-color);" >
+                  {{ option.text }}
+                </span>
+                </li>
+                        </ng-container>
+                        <ng-container *ngIf="!option.correct">
+                          <li class="list-group-item" style="background-color: var(--secondary-color);
+                          box-shadow: 0 0 15px rgba(0,0,0,0.2);" >
+                <span style="color: var(--text-color);" >
+                  {{ option.text }}
+                </span>
+                </li>
+                        </ng-container>                      
+                    </div>
+                    </ol>
+                  </ng-container>
+                </ng-container>
+          <ng-container *ngIf="($score | async)">
+            <ng-container *ngIf="($users | async) as users">
+              <h3 class="heading-quiz" style="text-align: center; padding: 10px 0;">Scoreboard</h3>
+              <table class="table" style="margin-bottom: 2%;">
+                <thead class="thead-light" 
+                style="background-color: var(--primary-color); 
+                color: var(--text-color);">
+                <tr>
+                  <th scope="col">Position</th>
+                  <th scope="col">Nickname</th>
+                  <th scope="col">Score</th>
+                </tr>
+                </thead>
+                <tbody *ngFor="let user of users; let i = index;">
+                <tr style="color: var(--text-color); 
+                background-color: var(--success-color);" *ngIf="user.points == 100">
+                  <td>{{i+1}}</td>
+                  <td style="justify-content: center">{{user.nickname}}</td>
+                  <td style="justify-content: center">{{user.points}}</td>
+                </tr>
+                <tr style="color: var(--text-color);" *ngIf="user.points !== 100">
+                  <td>{{i+1}}</td>
+                  <td style="justify-content: center">{{user.nickname}}</td>
+                  <td style="justify-content: center">{{user.points}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </ng-container>
+          </ng-container>
+              </div>
+              <button class="btn" (click)="hideModal()">Close</button>
+            </div>
+          </div>
+      </div>
+    </div>
+    </ng-container>
+</div>
